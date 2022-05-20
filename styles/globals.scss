@@ -1,0 +1,13 @@
+@import "./vars";
+@import "./briefClasses";
+
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: $app-background-color;
+}

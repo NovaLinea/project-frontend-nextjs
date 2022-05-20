@@ -1,0 +1,68 @@
+@import "../../styles/vars";
+
+.header {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.02);
+    background-color: $app-white-color;
+    height: 60px;
+    position: fixed;
+    text-align: center;
+    z-index: 3; 
+
+    .container {
+        margin: 0 auto;
+        max-width: $app-max-width;
+        width: 100%;
+
+        .header__left {
+            .logo {
+                text-decoration: none;
+                font-size: 22px;
+                color: $app-black-color;
+            }
+        }
+
+        .header__right {
+            .search, .notifications {
+                font-size: 28px;
+                cursor: pointer;
+                margin: 0 7px;
+            }
+
+            .notifications {
+                margin-right: 18px;
+            }
+
+            .search:hover, .notifications:hover {
+                opacity: 0.8;
+            }
+
+            .profile__icon {
+                margin-left: 20px;
+                background-color: $app-blue-color;
+                border-radius: 100px;
+                cursor: pointer;
+                color: $app-white-color;
+                font-weight: bold;
+                font-size: 20px;
+                display: flex;
+                align-items: center;
+                padding: 12px;
+            }
+
+            .dropdown {
+                .dropdown__btn {
+                    background-color: $app-white-color;
+                    box-shadow: none;
+                }
+
+                .dropdown__btn:hover {
+                    opacity: 0.9;
+                }
+
+                .logout {
+                    color: $app-red-color;
+                }
+            }
+        }
+    }
+}

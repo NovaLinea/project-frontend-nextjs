@@ -1,0 +1,33 @@
+@import "../../../styles/vars";
+
+.default {
+    padding: 7px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    border: 1.5px solid $app-blue-color;
+    border-radius: $app-radius;
+    cursor: pointer;
+    -moz-transition: all 0.1s ease-out;
+    -o-transition: all 0.1s ease-out;
+    -webkit-transition: all 0.1s ease-out;
+    transition: all 0.1s ease-out;
+}
+
+.fill {
+    color: $app-white-color;
+    background-color: $app-blue-color;
+}
+
+.fill:hover {
+    color: $app-black-color;
+    background-color: initial;
+}
+
+.outline {
+    color: $app-black-color;
+}
+
+.outline:hover {
+    color: $app-white-color;
+    background-color: $app-blue-color;
+}
