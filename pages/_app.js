@@ -1,6 +1,6 @@
 import '../styles/globals.scss'
-import {useContext} from 'react'
-import {Context} from "../contexts/AuthContext";
+import { useContext } from 'react'
+import { Context } from "../contexts/AuthContext";
 import { Header } from '../components/Header';
 import { Sidebar } from '../components/Sidebar';
 import { MainLayout } from '../components/MainLayout';
