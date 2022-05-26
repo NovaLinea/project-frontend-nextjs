@@ -30,9 +30,9 @@ export default class Store {
         this.isUserID = userID;
     }
 
-    async signup(name, email, password) {
+    async register(data) {
         try {
-            const response = await AuthService.signup(name, email, password);
+            const response = await AuthService.register(data);
             localStorage.setItem('token', response.data.accessToken);
             this.setUserID(response.data.userID);
             this.setAuth(true);
@@ -44,9 +44,9 @@ export default class Store {
         }
     }
 
-    async signin(email, password) {
+    async login(data) {
         try {
-            const response = await AuthService.signin(email, password);
+            const response = await AuthService.login(data);
             localStorage.setItem('token', response.data.accessToken);
             this.setUserID(response.data.userID);
             this.setAuth(true);

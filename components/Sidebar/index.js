@@ -19,7 +19,6 @@ export const Sidebar = () => {
     const [lastScrollY, setLastScrollY] = useState(0)
 
     useEffect(() => {
-        console.log(router.pathname);
         if (router.pathname === "/") {
             setActiveItem("popular");
         }

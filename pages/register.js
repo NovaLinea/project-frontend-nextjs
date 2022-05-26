@@ -1,30 +1,36 @@
-import { useState, useContext } from 'react'
-import { Context } from "../contexts/AuthContext";
 import Head from 'next/head'
 import Link from "next/link";
 import clsx from "clsx"
+import { setCookie } from "nookies";
 import { useRouter } from 'next/router';
 import { useForm, FormProvider } from "react-hook-form"
 import { yupResolver } from '@hookform/resolvers/yup';
 import styles from "../styles/Auth.module.scss";
-import { RegisterFormSchema } from "../utils/schemas/authValidation";
+import AuthService from '../API/AuthService';
+import { RegisterFormSchema } from "../utils/authValidation";
 import { IoMdArrowBack } from "react-icons/io";
 import { Button } from '../components/UI/Button';
 import { FormField } from '../components/FormField'
 
+
 export default function Register() {
-    const {store} = useContext(Context);
     const router = useRouter();
     const form = useForm({
         mode: 'onChange',
         resolver: yupResolver(RegisterFormSchema)
     });
-    const [name, setName] = useState('');
 
-    const onSubmit = (data) => console.log(data);
-
-    const registerUser = (data) => {
-        store.signup(data.fullname, data.email, data.password);
+    async function registerUser(data) {
+        try {
+            const response = await AuthService.register(data);
+            setCookie(null, 'token', response.data.accessToken, {
+                maxAge: 30 * 24 * 60 * 60,
+                path: '/'
+            })
+        } catch (e) {
+            if (e.response)
+                console.log(e.response.data.message)
+        }
 	}
 
     return (
@@ -35,19 +41,21 @@ export default function Register() {
 			</Head>
 
             <Link href="/">
-                <IoMdArrowBack className={clsx(styles.back, 'fw-bold')} />
+                <a>
+                    <IoMdArrowBack className={clsx(styles.back, 'fw-bold')} />
+                </a>
             </Link>
 
             <FormProvider {... form}>
-                <form className={styles.form} onSubmit={form.handleSubmit(onSubmit)}>
+                <form className={styles.form} onSubmit={form.handleSubmit(registerUser)}>
                     <h2>Регистрация</h2>
 
-                    <FormField name='fullname' label='Имя и фамилия' type='text' />
+                    <FormField name='name' label='Имя и фамилия' type='text' />
                     <FormField name='email' label='Почта' type='text' />
                     <FormField name='password' label='Пароль' type='password' />
 
                     <Button 
-                        disabled={!form.formState.isValid}
+                        disabled={!form.formState.isValid || form.formState.isSubmitting}
                         mode='fill' 
                         type='submit'
                     >
