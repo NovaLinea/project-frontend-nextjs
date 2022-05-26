@@ -1,10 +1,10 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 import classes from './Snackbar.module.scss'
 import { GrFormClose } from 'react-icons/gr'
 
 
-const Snackbar = forwardRef((props, ref) => {
-    const [show, setShow] = React.useState(false);
+export const Snackbar = forwardRef((props, ref) => {
+    const [show, setShow] = useState(false);
     const timeout = 5000;
     const [message, setMessage] = useState("");
     const [mode, setMode] = useState("");
@@ -38,5 +38,3 @@ const Snackbar = forwardRef((props, ref) => {
             </div>
     );
 })
-
-export default Snackbar;

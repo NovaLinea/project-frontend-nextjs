@@ -1,6 +1,6 @@
-import '../styles/globals.scss'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { Context } from "../contexts/AuthContext";
+import '../styles/globals.scss'
 import { Header } from '../components/Header';
 import { Sidebar } from '../components/Sidebar';
 import { MainLayout } from '../components/MainLayout';
@@ -8,6 +8,12 @@ import { MainLayout } from '../components/MainLayout';
 
 function MyApp({ Component, pageProps }) {
     const {store} = useContext(Context);
+
+    useEffect(() => {
+		if (localStorage.getItem('token')) {
+			store.checkAuth()
+		}
+	}, [])
 
     return (
         <Context.Provider value={{

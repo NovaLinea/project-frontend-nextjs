@@ -19,6 +19,7 @@ export const Header = () => {
 
     async function logout() {
         store.logout();
+        router.push("/")
     }
 
     return (
@@ -35,35 +36,14 @@ export const Header = () => {
                     
                     {!store.isAuth
                         ?
-                        <Button mode='fill' onClick={() => router.push("/signin")}>Вход</Button>
+                        <Button mode='fill' onClick={() => router.push("/login")}>Вход</Button>
                         :
                         <>
                             <Badge badgeContent={0} color="primary">
                                 <AiOutlineBell className={clsx(styles.notifications, 'fw-bold')}/>
                             </Badge>
 
-                            <Dropdown className={styles.dropdown__menu}>
-                                <Dropdown.Toggle variant="light" className={styles.dropdown__btn}>
-                                    <div className={styles.profile__icon}>
-                                        <AiOutlineUser/>
-                                    </div>
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu variant="light" className={styles.actions}>
-                                    <Dropdown.Item className={styles.action__item}>
-                                        <CgProfile className={styles.action__icon} />
-                                        Профиль
-                                    </Dropdown.Item>
-                                    <Dropdown.Item className={styles.action__item}>
-                                        <FiSettings className={styles.action__icon} />
-                                        Настройки
-                                    </Dropdown.Item>
-                                    <Dropdown.Item className={clsx(styles.action__item, styles.logout)} onClick={logout}>
-                                        <BiExit className={styles.action__icon} />
-                                        Выйти
-                                    </Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
+                            <Button mode='fill' onClick={logout}>Выйти</Button>
                         </>
                     }
                 </div>

@@ -1,0 +1,41 @@
+@import "./vars";
+@import "./briefClasses";
+
+
+.auth {
+    .back {
+        color: $app-grey-color;
+        text-decoration: none;
+        font-size: 30px;
+        padding-top: 50px;
+    }
+
+    .form {
+        background-color: $app-white-color;
+        max-width: 300px;
+        margin: 0 auto;
+        border-radius: $app-radius;
+        padding: 20px;
+        text-align: center;
+        margin-top: 100px;
+        box-shadow: $app-shadow;
+
+        h2 {
+            margin: 10px 0;
+            font-size: 28px;
+        }
+    
+        Button {
+            margin-top: 20px;
+        }
+    
+        p.change {
+            margin-top: 20px;
+    
+            span {
+                color: #0000ff;
+                cursor: pointer;
+            }
+        }
+    }
+}

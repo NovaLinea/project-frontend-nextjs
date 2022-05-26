@@ -39,3 +39,9 @@
     color: $app-white-color;
     background-color: $app-blue-color;
 }
+
+.disabled {
+    color: $app-white-color;
+    background-color: $app-blue-color;
+    opacity: 0.6;
+}
