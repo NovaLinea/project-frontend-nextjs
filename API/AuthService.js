@@ -9,7 +9,11 @@ export default class AuthService {
         return $api.post('/auth/login', data)
     }
 
-    static async logout() {
-        return $api.get('/auth/logout')
+    static async refresh(token) {
+        return $api.get('/auth/refresh', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
     }
 }

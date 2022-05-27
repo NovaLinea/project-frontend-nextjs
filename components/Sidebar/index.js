@@ -1,8 +1,9 @@
-import {useContext, useEffect, useState} from 'react'
-import {Context} from "../../contexts/AuthContext";
+import {useEffect, useState} from 'react'
 import styles from "./Sidebar.module.scss";
 import clsx from 'clsx';
 import Link from "next/link";
+import { useAppSelector } from '../../redux/hooks';
+import { selectUserData } from '../../redux/slices/user';
 import { useRouter } from 'next/router';
 import { AiOutlineFire, AiOutlineHome, AiOutlinePlus } from "react-icons/ai"
 import { BiMessageRounded } from "react-icons/bi"
@@ -12,7 +13,7 @@ import { CgProfile } from "react-icons/cg"
 
 
 export const Sidebar = () => {
-    const {store} = useContext(Context)
+    const userData = useAppSelector(selectUserData);
     const router = useRouter();
     const [activeItem, setActiveItem] = useState('')
     const [show, setShow] = useState(true)
@@ -22,7 +23,7 @@ export const Sidebar = () => {
         if (router.pathname === "/") {
             setActiveItem("popular");
         }
-        else if (router.pathname === '/profile/[id]' && router.query.id === store.isUserID) {
+        else if (router.pathname === '/profile/[id]' && router.query.id === userData.userID) {
             setActiveItem("profile");
         }
         else {
@@ -51,7 +52,7 @@ export const Sidebar = () => {
     
             setLastScrollY(window.scrollY);
         }
-      };
+    };
 
     return (
         <div className={clsx(styles.sidebar, !show && styles.hidden, 'd-flex align-center')}>
@@ -91,7 +92,7 @@ export const Sidebar = () => {
                 </a>
             </Link>
 
-            <Link href={`/profile/${store.isUserID}`}>
+            <Link href={`/profile/${userData.userID}`}>
                 <a className={clsx(activeItem === 'profile' && styles.active, styles.sidebar__item)}>
                     <CgProfile className={styles.sidebar__icon}/>
                 </a>

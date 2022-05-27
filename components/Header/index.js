@@ -1,5 +1,3 @@
-import {useContext} from 'react'
-import {Context} from "../../contexts/AuthContext";
 import clsx from 'clsx';
 import Link from "next/link";
 import { useRouter } from 'next/router';
@@ -11,14 +9,19 @@ import { FiSettings } from "react-icons/fi"
 import { Button } from "../UI/Button"
 import { Dropdown } from 'react-bootstrap';
 import Badge from '@mui/material/Badge';
+import { useAppSelector } from '../../redux/hooks';
+import { selectUserData } from '../../redux/slices/user';
+import { useAppDispatch } from '../../redux/hooks';
+import { setUserData } from '../../redux/slices/user';
 
 
 export const Header = () => {
-    const {store} = useContext(Context)
+    const dispatch = useAppDispatch();
+    const userData = useAppSelector(selectUserData);
     const router = useRouter();
 
     async function logout() {
-        store.logout();
+        dispatch(setUserData(null));
         router.push("/")
     }
 
@@ -34,7 +37,7 @@ export const Header = () => {
                 <div className={clsx(styles.header__right, 'd-flex align-center')}>
                     <BiSearch className={clsx(styles.search, 'fw-bold')} />
                     
-                    {!store.isAuth
+                    {!userData
                         ?
                         <Button mode='fill' onClick={() => router.push("/login")}>Вход</Button>
                         :
