@@ -1,0 +1,111 @@
+@import "./vars";
+@import "./briefClasses";
+
+.create {
+    text-align: left;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    max-width: 700px;
+    background-color: $app-white-color;
+    border-radius: $app-radius;
+    padding: 15px 25px;
+    -webkit-box-shadow: $app-shadow;
+    box-shadow: $app-shadow;
+    
+    .create__editor {
+        .title {
+            height: 100%;
+            width: 100%;
+            font-weight: bold;
+            font-size: 22px;
+            border: 0;
+            outline: 0;
+            resize: none;
+            overflow-y: hidden;
+        }
+
+        .description {
+            width: 100%;
+            font-size: 16px;
+            border: 0;
+            outline: 0;
+            overflow-y: hidden;
+            resize: none;
+            margin: 15px 0 30px 0;
+            cursor: text;
+        }
+    
+        .type__project {
+            width: 100%;
+            background-color: $app-background-color;
+            border-radius: $app-radius;
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-around;
+
+            .type__item {
+                width: 33%;
+                text-align: center;
+                border-radius: $app-radius;
+                padding: 7px;
+                margin: 5px 7px;
+                cursor: pointer;
+            }
+
+            .type__item.active {
+                background-color: $app-white-color;
+            }
+        }
+
+        Input {
+            margin-top: 10px;
+        }
+
+        .price__project, .target__donates {
+            max-width: 200px;
+        }
+
+        .staff__project {
+            max-width: 450px;
+
+            .list__staff {
+                margin-top: 15px;
+                padding: 0 20px;
+                
+                .staff__item {
+                    width: 345px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    li {
+                        font-size: 17px;
+                        margin-bottom: 5px;
+                    }
+
+                    .close {
+                        font-size: 20px;
+                    }
+                }
+            }
+
+            .add__staff {
+                padding: 0;
+                display: flex;
+                align-items: center;
+
+                Input {
+                    margin-right: 10px;
+                }
+
+                Button {
+                    padding: 9px 20px;
+                }
+            }
+        }
+    }
+
+    Button {
+        margin-top: 10px;
+    }
+}

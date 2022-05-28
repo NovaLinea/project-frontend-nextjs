@@ -120,8 +120,8 @@ export function ProjectItem({project, listLikes, listFavorites}) {
                 <div className={styles.main__data}>
                     <div className={styles.person}>
                         <div className={styles.photo}></div>
-                        <Link to={`/profile/${project.user_id}`} className={styles.name}>
-                            <a>{project.name_creator}</a>
+                        <Link href={`/profile/${project.user_id}`}>
+                            <a className={styles.name}>{project.name_creator}</a>
                         </Link>
 
                         <div className={styles.type}>
