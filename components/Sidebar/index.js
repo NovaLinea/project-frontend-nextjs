@@ -23,7 +23,7 @@ export const Sidebar = () => {
         if (router.pathname === "/") {
             setActiveItem("popular");
         }
-        else if (router.pathname === '/profile/[id]' && router.query.id === userData.userID) {
+        else if (router.pathname === '/profile/[id]' && router.query.id === userData.id) {
             setActiveItem("profile");
         }
         else {
@@ -92,7 +92,7 @@ export const Sidebar = () => {
                 </a>
             </Link>
 
-            <Link href={`/profile/${userData.userID}`}>
+            <Link href={`/profile/${userData.id}`}>
                 <a className={clsx(activeItem === 'profile' && styles.active, styles.sidebar__item)}>
                     <CgProfile className={styles.sidebar__icon}/>
                 </a>

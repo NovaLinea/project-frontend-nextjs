@@ -7,8 +7,8 @@ import { useForm, FormProvider } from "react-hook-form"
 import { yupResolver } from '@hookform/resolvers/yup';
 import styles from "../styles/Auth.module.scss"
 import AuthService from '../API/AuthService'
-import { useAppDispatch } from '../redux/hooks';
-import { setUserData } from '../redux/slices/user';
+//import { useAppDispatch } from '../redux/hooks';
+//import { setUserData } from '../redux/slices/user';
 import { LoginFormSchema } from "../utils/authValidation";
 import { IoMdArrowBack } from "react-icons/io"
 import { Button } from '../components/UI/Button'
@@ -16,7 +16,7 @@ import { FormField } from '../components/FormField'
 
 
 export default function Login() {
-    const dispatch = useAppDispatch();
+    //const dispatch = useAppDispatch();
     const router = useRouter()
     const form = useForm({
         mode: 'onChange',
@@ -30,7 +30,8 @@ export default function Login() {
                 maxAge: 30 * 24 * 60 * 60,
                 path: '/'
             })
-            dispatch(setUserData(response.data));
+            //dispatch(setUserData(response.data));
+            router.push("/");
         } catch (e) {
             if (e.response)
                 console.log(e.response.data.message)
