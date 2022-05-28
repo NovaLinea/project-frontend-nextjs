@@ -1,8 +1,8 @@
 import classes from './Toggle.module.scss'
 
-const Toggle = ({props, text, status, change}) => {
+export const Toggle = ({props, text, status, change}) => {
     return (
-        <label>
+        <label className={classes.label}>
             {status === "checked"
                 ? <input type="checkbox" onChange={change} defaultChecked className={classes.Tggl} {...props} />
                 : <input type="checkbox" onChange={change} className={classes.Tggl} {...props} />
@@ -11,5 +11,3 @@ const Toggle = ({props, text, status, change}) => {
         </label>
     );
 };
-
-export default Toggle;

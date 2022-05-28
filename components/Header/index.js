@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import { destroyCookie } from "nookies";
 import { useAppSelector } from '../../redux/hooks';
 import { selectUserData } from '../../redux/slices/user';
+import { useAppDispatch } from '../../redux/hooks';
+import { setUserData } from '../../redux/slices/user';
 import styles from "./Header.module.scss";
 import { AiOutlineBell, AiOutlineUser } from "react-icons/ai"
 import { BiExit, BiSearch } from "react-icons/bi"
@@ -12,8 +14,6 @@ import { FiSettings } from "react-icons/fi"
 import { Button } from "../UI/Button"
 import { Dropdown } from 'react-bootstrap';
 import Badge from '@mui/material/Badge';
-import { useAppDispatch } from '../../redux/hooks';
-import { setUserData } from '../../redux/slices/user';
 
 
 export const Header = () => {

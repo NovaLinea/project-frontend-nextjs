@@ -55,9 +55,9 @@ export default function Register() {
                 <form className={styles.form} onSubmit={form.handleSubmit(registerUser)}>
                     <h2>Регистрация</h2>
 
-                    <FormField name='name' label='Имя и фамилия' type='text' />
-                    <FormField name='email' label='Почта' type='text' />
-                    <FormField name='password' label='Пароль' type='password' />
+                    <FormField name='name' placeholder='Имя и фамилия' type='text' />
+                    <FormField name='email' placeholder='Почта' type='text' />
+                    <FormField name='password' placeholder='Пароль' type='password' />
 
                     <Button 
                         disabled={!form.formState.isValid || form.formState.isSubmitting}

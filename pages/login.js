@@ -55,8 +55,8 @@ export default function Login() {
                 <form onSubmit={form.handleSubmit(loginUser)} className={styles.form}>
                     <h2>Вход</h2>
 
-                    <FormField name='email' label='Почта' type='text' />
-                    <FormField name='password' label='Пароль' type='password' />
+                    <FormField name='email' placeholder='Почта' type='text' />
+                    <FormField name='password' placeholder='Пароль' type='password' />
 
                     <Button 
                         disabled={!form.formState.isValid || form.formState.isSubmitting}

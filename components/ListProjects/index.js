@@ -4,7 +4,7 @@ import { selectUserData } from '../../redux/slices/user';
 import UserService from '../../API/UserService';
 import styles from "./ListProjects.module.scss";
 import { ProjectItem } from './ProjectItem';
-import Loader from '../UI/Loader';
+import { Loader } from '../UI/Loader';
 
 
 export function ListProjects({projects}) {

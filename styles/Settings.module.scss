@@ -1,0 +1,77 @@
+@import "./vars";
+@import "./briefClasses";
+
+.settings {
+    text-align: left;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    max-width: 700px;
+    background-color: $app-white-color;
+    border-radius: $app-radius;
+    padding: 15px 25px;
+    -webkit-box-shadow: $app-shadow;
+    box-shadow: $app-shadow;
+
+    h3.title {
+        font-weight: bold;
+        color: $app-black-color;
+        font-size: 20px;
+        margin: 0;
+        margin-bottom: 5px;
+    }
+
+    .settings__item {
+        width: 320px;
+
+        p.name {
+            color: $app-grey-color;
+            margin: 0;
+            margin-bottom: 7px;
+            font-size: 15px;
+        }
+    }
+
+    .main__settings {
+
+        .settings__header {
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+    }
+
+    .change__password {
+        max-width: 320px;
+
+        h3.title {
+            margin-bottom: 10px;
+        }
+    }
+
+    .notifications {
+        margin-top: 15px;
+        max-width: 300px;
+
+        h3.title {
+            margin-bottom: 10px;
+        }
+    }
+
+    .delete__account {
+        margin-top: 20px;
+        width: 100%;
+        text-align: center;
+
+        p {
+            color: $app-red-color;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        p:hover {
+            opacity: 0.7;
+        }
+    }
+}
