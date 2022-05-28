@@ -12,7 +12,7 @@ import AuthService from '../API/AuthService'
 import { LoginFormSchema } from "../utils/authValidation";
 import { IoMdArrowBack } from "react-icons/io"
 import { Button } from '../components/UI/Button'
-import { FormField } from '../components/FormField'
+import { FormField } from '../components/UI/FormField'
 
 
 export default function Login() {

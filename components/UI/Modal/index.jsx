@@ -2,7 +2,7 @@ import classes from './Modal.module.scss'
 import { GrFormClose } from 'react-icons/gr'
 
 
-const Modal = ({title, children, visible, setVisible}) => {
+export const Modal = ({title, children, visible, setVisible}) => {
 
     const rootClasses = [classes.Modal]
     if (visible) {
@@ -22,5 +22,3 @@ const Modal = ({title, children, visible, setVisible}) => {
         </div>
     );
 };
-
-export default Modal;

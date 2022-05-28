@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router';
 import { useForm, FormProvider } from "react-hook-form"
+import { destroyCookie } from "nookies";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAppSelector } from '../redux/hooks';
 import { selectUserData } from '../redux/slices/user';
+import { useAppDispatch } from '../redux/hooks';
+import { setUserData } from '../redux/slices/user';
 import styles from "../styles/Settings.module.scss"
 import UserService from '../API/UserService';
 import { MainDataUser } from '../utils/settingsValidation';
@@ -12,10 +15,13 @@ import { ChangePassword } from '../utils/settingsValidation';
 import { Loader } from '../components/UI/Loader';
 import { Button } from "../components/UI/Button"
 import { Toggle } from '../components/UI/Toggle';
-import { FormField } from '../components/FormField'
+import { FormField } from '../components/UI/FormField'
+import { Modal } from '../components/UI/Modal'
+import { ConfirmAction } from '../components/ConfirmAction';
 
 
 export default function Settings() {
+    const dispatch = useAppDispatch();
     const userData = useAppSelector(selectUserData);
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
@@ -25,6 +31,7 @@ export default function Settings() {
     const [ntfsNewComment, setNftsNewComment] = useState(false);
     const [ntfsUpdate, setNftsUpdate] = useState(false);
     const [ntfsEmail, setNftsEmail] = useState(false);
+    const [modalConfirm, setModalConfirm] = useState(false);
 
     const formChangePassword = useForm({
         mode: 'onChange',
@@ -87,6 +94,21 @@ export default function Settings() {
             }
         } catch (e) {
             console.log('Ошибка при изменении пароля');
+        }
+    }
+
+    async function deleteAccount(choice) {
+        try {
+            setModalConfirm(false);
+            if (choice) {
+                await UserService.deleteAccount(userData.id);
+
+                destroyCookie(null, 'token')
+                dispatch(setUserData(null));
+                router.push("/")
+            }
+        } catch (e) {
+            console.log('Ошибка при удалении аккаунта');
         }
     }
 
@@ -243,6 +265,10 @@ export default function Settings() {
             <div className={styles.delete__account}>
                 <p onClick={() => setModalConfirm(true)}>Удалить аккаунт</p>
             </div>
+
+            <Modal title='Удаление аккаунта' visible={modalConfirm} setVisible={setModalConfirm}>
+                <ConfirmAction text="Вы уверены, что хотите удалить аккаунт и все свои проекты?" action={deleteAccount}/>
+            </Modal>
         </div>
     );
 }
