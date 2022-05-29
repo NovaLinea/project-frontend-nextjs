@@ -6,24 +6,12 @@ import { Snackbar } from "../components/UI/Snackbar";
 import { ListProjects } from '../components/ListProjects';
 
 
-export default function Popular() {
-    const [projects, setProjects] = useState([])
+export default function Popular({projects, error}) {
     const snackbarRef = useRef(null);
 
-    useEffect(() => {
-        fetchProjects();
-    }, [])
-
-    async function fetchProjects() {
-        try {
-            const response = await ProjectService.fetchProjectsPopular();
-            
-            if (response.data) {
-                setProjects(response.data);
-            }
-        } catch (e) {
-            snackbarRef.current.show('Ошибка при получении проектов', 'error');
-        }
+    if (error) {
+        console.log(error)
+        //snackbarRef.current.show(error, 'error');
     }
 
     return (
@@ -33,8 +21,30 @@ export default function Popular() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <ListProjects projects={projects} />
+            {projects &&
+                <ListProjects projects={projects} />
+            }
+            
             <Snackbar ref={snackbarRef} />
         </div>
     );
 }
+
+export async function getStaticProps(context) {
+    try {
+        const response = await ProjectService.fetchProjectsPopular();
+
+        return {
+            props: {
+                projects: response.data,
+                error: 'Ошибка при получении проектов'
+            },
+        }
+    } catch (e) {
+        return {
+            props: {
+                error: 'Ошибка при получении проектов'
+            },
+        }
+    }
+  }

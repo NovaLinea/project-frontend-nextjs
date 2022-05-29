@@ -5,11 +5,20 @@ import { wrapper } from '../redux/store';
 import { parseCookies } from 'nookies';
 import AuthService from '../API/AuthService';
 import { setUserData } from '../redux/slices/user';
+import NextNProgress from "nextjs-progressbar";
 
 
 function App({ Component, pageProps }) {
     return (
         <>
+            <NextNProgress
+                color="#1e2d43"
+                startPosition={0.3}
+                stopDelayMs={200}
+                height={3}
+                showOnShallow={true}
+            />
+
             <Header />
             
             <MainLayout>
