@@ -25,7 +25,6 @@ export default function Settings() {
     const userData = useAppSelector(selectUserData);
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const [settings, setSettings] = useState({});
     const [ntfsNewMsg, setNftsNewMsg] = useState(false);
     const [ntfsNewSubs, setNftsNewSubs] = useState(false);
     const [ntfsNewComment, setNftsNewComment] = useState(false);
@@ -52,8 +51,6 @@ export default function Settings() {
             const response = await UserService.fetchDataSettings(userData.id);
             
             if (response.data) {
-                setSettings(response.data);
-
                 if (response.data.notifications) {
                     setNftsNewMsg(response.data.notifications.new_message);
                     setNftsNewSubs(response.data.notifications.new_sub);
@@ -157,7 +154,7 @@ export default function Settings() {
                             name='name' 
                             placeholder='Имя и фамилия' 
                             type='text' 
-                            defaultValue={settings.name} 
+                            defaultValue={userData.name} 
                         />
                     </div>
 
@@ -167,7 +164,7 @@ export default function Settings() {
                             name='email' 
                             placeholder='Почта' 
                             type='text'
-                            defaultValue={settings.email}
+                            defaultValue={userData.email}
                          />
                     </div>
 
@@ -177,7 +174,7 @@ export default function Settings() {
                             name='description' 
                             placeholder='Описание' 
                             type='text' 
-                            defaultValue={settings.description}
+                            defaultValue={userData.description}
                             multiline 
                             rows={6} 
                         />

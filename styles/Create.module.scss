@@ -22,6 +22,7 @@
             outline: 0;
             resize: none;
             overflow-y: hidden;
+            font-family: $app-font-family;
         }
 
         .description {
@@ -31,8 +32,9 @@
             outline: 0;
             overflow-y: hidden;
             resize: none;
-            margin: 15px 0 30px 0;
+            margin: 10px 0 30px 0;
             cursor: text;
+            font-family: $app-font-family;
         }
     
         .type__project {
@@ -48,7 +50,7 @@
                 text-align: center;
                 border-radius: $app-radius;
                 padding: 7px;
-                margin: 5px 7px;
+                margin: 5px;
                 cursor: pointer;
             }
 
