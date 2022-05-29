@@ -13,30 +13,61 @@ import { BiImage } from "react-icons/bi";
 import { ParamsProfile } from '../../components/ParamsProfile';
 import { ListProjects } from '../../components/ListProjects';
 import { Button } from "../../components/UI/Button"
+import { Loader } from '../../components/UI/Loader';
 import Avatar from '@mui/material/Avatar';
 
 
 export default function Profile() {
     const userData = useAppSelector(selectUserData);
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState({});
     const [projects, setProjects] = useState([]);
     const [modeSubscribe, setModeSubscribe] = useState(false);
     const [followings, setFollowings] = useState([]);
     const [photo, setPhoto] = useState(null);
 
     useEffect(() => {
-        setPhoto(userData.photo)
         fetchProjects();
 
-        if (userData)
+        if (userData) {
+            if (userData.id === router.query.id) {
+                setData(userData);
+                setPhoto(userData.photo);
+            }
+            else
+                fetchData();
+
             fetchFollowings();
-    }, [router.pathname])
+        }
+    }, [router.query.id])
+
+    async function fetchData() {
+        try {
+            setIsLoading(true);
+            const response = await UserService.fetchDataProfile(router.query.id);
+            
+            if (response.data) {
+                setData(response.data);
+                setPhoto(response.data.photo);
+            }
+            
+        } catch (e) {
+            console.log('Ошибка при получении данных пользователя');
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     async function fetchProjects() {
         try {
             const response = await ProjectService.fetchProjectsUser(router.query.id);
+            
             if (response.data) {
                 setProjects(response.data);
+            }
+            else {
+                setProjects([]);
             }
         } catch (e) {
             console.log('Ошибка при получении проектов');
@@ -91,6 +122,14 @@ export default function Profile() {
         }
     }
 
+    if (isLoading) {
+        return (
+            <div style={{display: 'flex', justifyContent: 'center', marginTop: 50}}>
+                <Loader/>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.profile}>
             <Head>
@@ -115,8 +154,8 @@ export default function Profile() {
                     </div>                    
 
                     <div className={styles.text}>
-                        <h3 className={styles.name}>{userData.name}</h3>
-                        <p className={styles.description}>{userData.description}</p>
+                        <h3 className={styles.name}>{data.name}</h3>
+                        <p className={styles.description}>{data.description}</p>
                     </div>
                 </div>
                 <div className={styles.action}>
@@ -149,8 +188,8 @@ export default function Profile() {
             <ParamsProfile countProjects={projects.length} userID={router.query.id} />
 
             <div className={styles.profile__content}>
-                {projects.length === 0
-                    ? <p className={styles.empty}>К сожалению у вас еще нет проектов</p>
+                {!projects.length
+                    ? <p className={styles.empty}>Пока нет проектов</p>
                     : <ListProjects projects={projects} />
                 }
             </div>

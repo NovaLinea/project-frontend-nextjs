@@ -30,6 +30,16 @@
       "static/chunks/main.js",
       "static/chunks/pages/create.js"
     ],
+    "/favorite": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/favorite.js"
+    ],
+    "/home": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/home.js"
+    ],
     "/popular": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",

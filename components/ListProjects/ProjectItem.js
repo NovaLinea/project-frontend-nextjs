@@ -145,7 +145,7 @@ export function ProjectItem({project, listLikes, listFavorites}) {
                 </div>
             </div>
 
-            <div onClick={() => navigate(`/project/${project.id}`)} className={styles.project__body}>
+            <div onClick={() => router.push(`/project/${project.id}`)} className={styles.project__body}>
                 {project.description.length > maxSymbols
                     ? <p className={styles.description}>{project.description.substr(0, maxSymbols)}...</p>
                     : <p className={styles.description}>{project.description.substr(0, maxSymbols)}</p>

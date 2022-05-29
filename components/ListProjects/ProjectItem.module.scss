@@ -106,7 +106,7 @@
         .necessary__staff {
             p.title {
                 margin: 0;
-                margin-top: -10px;
+                margin-top: 10px;
                 font-weight: bold;
                 font-size: 17px;
             }
@@ -115,6 +115,10 @@
                 padding-left: 20px;
                 margin-top: 5px;
                 margin-bottom: 10px;
+
+                li {
+                    margin-bottom: 7px;
+                }
             }
         }
     }

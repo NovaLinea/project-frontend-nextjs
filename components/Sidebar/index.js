@@ -29,7 +29,7 @@ export const Sidebar = () => {
         else {
             setActiveItem(router.pathname.substring(1, location.pathname.length));
         }
-    }, [router.pathname])
+    }, [router.pathname, router.query.id])
 
     useEffect(() => {
         if (typeof window !== 'undefined') {

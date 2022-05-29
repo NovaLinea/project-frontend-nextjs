@@ -13,7 +13,7 @@ export function ParamsProfile({countProjects, userID}) {
 
     useEffect(() => {
         fetchData();
-    }, [router.pathname])
+    }, [router.query.id])
 
     async function fetchData() {
         try {

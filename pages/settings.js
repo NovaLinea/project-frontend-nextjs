@@ -24,7 +24,7 @@ export default function Settings() {
     const dispatch = useAppDispatch();
     const userData = useAppSelector(selectUserData);
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [settings, setSettings] = useState({});
     const [ntfsNewMsg, setNftsNewMsg] = useState(false);
     const [ntfsNewSubs, setNftsNewSubs] = useState(false);
@@ -48,6 +48,7 @@ export default function Settings() {
 
     async function fetchData() {
         try {
+            setIsLoading(true);
             const response = await UserService.fetchDataSettings(userData.id);
             
             if (response.data) {
