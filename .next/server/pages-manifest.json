@@ -2,5 +2,10 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/settings": "pages/settings.js",
+  "/create": "pages/create.js",
+  "/favorite": "pages/favorite.js",
+  "/messages": "pages/messages.js",
+  "/home": "pages/home.js",
   "/popular": "pages/popular.js"
 }

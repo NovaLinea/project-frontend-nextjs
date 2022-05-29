@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import UserService from '../../API/UserService';
 import styles from "./ParamsProfile.module.scss";
+import { Snackbar } from "../UI/Snackbar";
 
 
 export function ParamsProfile({countProjects, userID}) {
+    const snackbarRef = useRef(null);
     const router = useRouter();
     const [follows, setFollows] = useState(0);
     const [followings, setFollowings] = useState(0);
@@ -24,7 +26,7 @@ export function ParamsProfile({countProjects, userID}) {
                 setFollows(response.data.follows);
             }
         } catch (e) {
-            console.log('Ошибка при получение параметров профиля');
+            snackbarRef.current.show('Ошибка при получение параметров профиля', 'error');
         }
     }
 
@@ -44,6 +46,8 @@ export function ParamsProfile({countProjects, userID}) {
                 <p>Подписок</p>
                 <p>{followings}</p>
             </div>
+
+            <Snackbar ref={snackbarRef} />
         </div>
     );
 }

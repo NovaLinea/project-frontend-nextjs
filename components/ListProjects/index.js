@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import { selectUserData } from '../../redux/slices/user';
 import UserService from '../../API/UserService';
 import styles from "./ListProjects.module.scss";
 import { ProjectItem } from './ProjectItem';
 import { Loader } from '../UI/Loader';
+import { Snackbar } from "../UI/Snackbar";
 
 
 export function ListProjects({projects}) {
     const userData = useAppSelector(selectUserData);
+    const snackbarRef = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
     const [favorites, setFavorites] = useState([]);
     const [likes, setLikes] = useState([]);
@@ -33,6 +35,7 @@ export function ListProjects({projects}) {
             }
         } catch (e) {
             console.log('Ошибка при получении данных о лайках и избранном');
+            snackbarRef.current.show('Ошибка при получении данных о лайках и избранном', 'error');
         } finally {
             setIsLoading(false);
         }
@@ -51,6 +54,8 @@ export function ListProjects({projects}) {
             {projects.map(project => 
                 <ProjectItem key={project.id} project={project} listLikes={likes} listFavorites={favorites} />
             )}
+
+            <Snackbar ref={snackbarRef} />
         </div>
     );
 }

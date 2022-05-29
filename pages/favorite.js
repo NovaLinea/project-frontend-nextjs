@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import { useAppSelector } from '../redux/hooks';
 import { selectUserData } from '../redux/slices/user';
 import styles from "../styles/Favorite.module.scss"
 import ProjectService from '../API/ProjectService';
+import { Snackbar } from "../components/UI/Snackbar";
 import { ListProjects } from '../components/ListProjects';
 
 
 export default function Favorite() {
     const userData = useAppSelector(selectUserData);
+    const snackbarRef = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
     const [projects, setProjects] = useState([]);
 
@@ -23,7 +25,7 @@ export default function Favorite() {
             if (response.data)
                 setProjects(response.data);
         } catch (e) {
-            console.log('Ошибка при получении проектов');
+            snackbarRef.current.show('Ошибка при получении проектов', 'error');
         } finally {
             setIsLoading(false);
         }
@@ -46,6 +48,8 @@ export default function Favorite() {
                 ? <ListProjects projects={projects} />
                 : <p className={styles.empty}>У вас нет избранных проектов</p>
             }
+
+            <Snackbar ref={snackbarRef} />
         </div>
     );
 }

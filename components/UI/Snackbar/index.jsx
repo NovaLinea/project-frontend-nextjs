@@ -10,13 +10,7 @@ export const Snackbar = forwardRef((props, ref) => {
     const [mode, setMode] = useState("");
 
     useImperativeHandle(ref, () => ({
-        show() {
-            setShow(true);
-            setTimeout(() => {
-                setShow(false)
-            }, timeout)
-        },
-        show1(message, mode) {
+        show(message, mode) {
             setMessage(message);
             setMode(mode);
 
@@ -31,9 +25,9 @@ export const Snackbar = forwardRef((props, ref) => {
         show &&
             <div
                 className={classes.snackbar}
-                id={props.mode === "error" ? classes.error : classes.success}
+                id={mode === "error" ? classes.error : classes.success}
             >
-                <div className={classes.message}>{props.message}</div>
+                <div className={classes.message}>{message}</div>
                 <GrFormClose onClick={() => setShow(false)} className={classes.close}/>
             </div>
     );

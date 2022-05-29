@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import clsx from 'clsx';
 import { useAppSelector } from '../redux/hooks';
@@ -8,11 +8,13 @@ import ProjectService from '../API/ProjectService';
 import { GrFormClose } from 'react-icons/gr';
 import { Button } from '../components/UI/Button';
 import { Input } from '../components/UI/Input';
+import { Snackbar } from "../components/UI/Snackbar";
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 
 
 export default function Create(props) {
     const userData = useAppSelector(selectUserData);
+    const snackbarRef = useRef(null);
     const [nameProject, setNameProject] = useState("");
     const [descriptionProject, setDescriptionProject] = useState("");
     const [typeProject, setTypeProject] = useState("sale");
@@ -36,10 +38,10 @@ export default function Create(props) {
         try {
             if (userData) {
                 if (nameProject === "" || descriptionProject === "" || (typeProject === "donates" && paymentSystem === "" && priceProject === "") || (typeProject !== "team" && priceProject === ""))
-                    console.log('Вы заполнили не все поля');
+                    snackbarRef.current.show('Вы заполнили не все поля', 'error');
 
                 else if (typeProject === "team" && listStaff.length === 0)
-                    console.log('Добавьте хотя бы одну должность');
+                    snackbarRef.current.show('Добавьте хотя бы одну должность', 'error');
 
                 else {
                     await ProjectService.createProject(userData.id, nameProject, descriptionProject, typeProject, priceProject, paymentSystem, listStaff);
@@ -50,14 +52,14 @@ export default function Create(props) {
                     setPaymentSystem("");
                     setListStaff([]);
 
-                    console.log('Проект успешно создан');
+                    snackbarRef.current.show('Проект успешно создан', 'success');
                 }
             }
             else
-                console.log('Вы не авторизованы в системе');
+                snackbarRef.current.show('Вы не авторизованы в системе', 'error');
 
         } catch (e) {
-            console.log('Ошибка при создании проекта');
+            snackbarRef.current.show('Ошибка при создании проекта', 'error');
         }
     }
 
@@ -196,6 +198,8 @@ export default function Create(props) {
                     <Button mode='output' onClick={props.cancel} style={{marginLeft: 10}}>Отмена</Button>
                 </div>
             }
+
+            <Snackbar ref={snackbarRef} />
         </div>
     );
 }

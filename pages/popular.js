@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Head from 'next/head';
 import styles from "../styles/Popular.module.scss";
 import ProjectService from '../API/ProjectService';
+import { Snackbar } from "../components/UI/Snackbar";
 import { ListProjects } from '../components/ListProjects';
 
 
 export default function Popular() {
     const [projects, setProjects] = useState([])
+    const snackbarRef = useRef(null);
 
     useEffect(() => {
         fetchProjects();
@@ -20,7 +22,7 @@ export default function Popular() {
                 setProjects(response.data);
             }
         } catch (e) {
-            console.log('Ошибка при получении проектов');
+            snackbarRef.current.show('Ошибка при получении проектов', 'error');
         }
     }
 
@@ -32,6 +34,7 @@ export default function Popular() {
             </Head>
 
             <ListProjects projects={projects} />
+            <Snackbar ref={snackbarRef} />
         </div>
     );
 }

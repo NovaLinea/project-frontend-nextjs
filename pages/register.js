@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import Head from 'next/head'
 import Link from "next/link";
 import clsx from "clsx"
@@ -13,10 +14,12 @@ import { RegisterFormSchema } from "../utils/authValidation";
 import { IoMdArrowBack } from "react-icons/io";
 import { Button } from '../components/UI/Button';
 import { FormField } from '../components/UI/FormField'
+import { Snackbar } from "../components/UI/Snackbar";
 
 
 export default function Register() {
     //const dispatch = useAppDispatch();
+    const snackbarRef = useRef(null);
     const router = useRouter();
     const form = useForm({
         mode: 'onChange',
@@ -34,7 +37,7 @@ export default function Register() {
             router.push("/");
         } catch (e) {
             if (e.response)
-                console.log(e.response.data.message)
+                snackbarRef.current.show(e.response.data.message, 'error');
         }
 	}
 
@@ -70,6 +73,8 @@ export default function Register() {
                     <p className={styles.change}>Есть аккаунт? <span onClick={() => router.push("/login")}>Войти</span></p>
                 </form>
             </FormProvider>
+
+            <Snackbar ref={snackbarRef} />
         </div>
     );
 }

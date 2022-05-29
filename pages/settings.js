@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router';
 import { useForm, FormProvider } from "react-hook-form"
@@ -18,11 +18,13 @@ import { Toggle } from '../components/UI/Toggle';
 import { FormField } from '../components/UI/FormField'
 import { Modal } from '../components/UI/Modal'
 import { ConfirmAction } from '../components/ConfirmAction';
+import { Snackbar } from "../components/UI/Snackbar";
 
 
 export default function Settings() {
     const dispatch = useAppDispatch();
     const userData = useAppSelector(selectUserData);
+    const snackbarRef = useRef(null);
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [ntfsNewMsg, setNftsNewMsg] = useState(false);
@@ -61,7 +63,7 @@ export default function Settings() {
             }
             
         } catch (e) {
-            console.log('Ошибка при получении настроек');
+            snackbarRef.current.show('Ошибка при получении настроек', 'error');
         } finally {
             setIsLoading(false);
         }
@@ -70,28 +72,29 @@ export default function Settings() {
     async function saveData(data) {
         try {
             await UserService.saveData(userData.id, data.name, data.email, data.description, ntfsNewMsg, ntfsNewSubs, ntfsNewComment, ntfsUpdate, ntfsEmail);
-            console.log('Настройки успешно сохранены');
+            snackbarRef.current.show('Настройки успешно сохранены', 'success');
         } catch (e) {
-            console.log('Ошибка при сохранении данных пользователя');
+            snackbarRef.current.show('Ошибка при сохранении данных пользователя', 'error');
         }
     }
 
     async function changePassword(data) {
         try {
             if (data.newPassword !== data.newConfirmPassword)
-                console.log('Новые пароли не совпадают');
+                snackbarRef.current.show('Новые пароли не совпадают', 'error');
             else if (data.newPassword === data.oldPassword)
-                console.log('Новые пароли не отличается от старого');
+                snackbarRef.current.show('Новые пароли не отличается от старого', 'error');
             else {
                 await UserService.changePassword(userData.id, data.oldPassword, data.newPassword);
                 console.log('Пароль успешно изменен');
+                snackbarRef.current.show('Добавьте хотя бы одну должность', 'error');
 
                 formChangePassword.resetField("oldPassword")
                 formChangePassword.resetField("newPassword")
                 formChangePassword.resetField("newConfirmPassword")
             }
         } catch (e) {
-            console.log('Ошибка при изменении пароля');
+            snackbarRef.current.show('Ошибка при изменении пароля', 'error');
         }
     }
 
@@ -106,7 +109,7 @@ export default function Settings() {
                 router.push("/")
             }
         } catch (e) {
-            console.log('Ошибка при удалении аккаунта');
+            snackbarRef.current.show('Ошибка при удалении аккаунта', 'error');
         }
     }
 
@@ -267,6 +270,8 @@ export default function Settings() {
             <Modal title='Удаление аккаунта' visible={modalConfirm} setVisible={setModalConfirm}>
                 <ConfirmAction text="Вы уверены, что хотите удалить аккаунт и все свои проекты?" action={deleteAccount}/>
             </Modal>
+
+            <Snackbar ref={snackbarRef} />
         </div>
     );
 }
