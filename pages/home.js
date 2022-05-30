@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import Head from 'next/head'
 import { useAppSelector } from '../redux/hooks';
 import { selectUserData } from '../redux/slices/user';
@@ -8,15 +8,10 @@ import { Snackbar } from "../components/UI/Snackbar";
 import { ListProjects } from '../components/ListProjects';
 
 
-export default function Home() {
+const Home = ({projects, error}) => {
     const userData = useAppSelector(selectUserData);
     const snackbarRef = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [projects, setProjects] = useState([]);
-
-    useEffect(() => {
-        fetchProjects();
-    }, [])
 
     async function fetchProjects() {
         try {
@@ -25,7 +20,7 @@ export default function Home() {
             if (response.data)
                 setProjects(response.data);
         } catch (e) {
-            snackbarRef.current.show('Ошибка при получении проектов', 'error');
+            //snackbarRef.current.show('Ошибка при получении проектов', 'error');
         } finally {
             setIsLoading(false);
         }
@@ -53,3 +48,24 @@ export default function Home() {
         </div>
     );
 }
+
+export const getServerSideProps = async (ctx) => {
+    try {
+        console.log('USER DATA', ctx)
+        const response = await Api(ctx).project.getHome();
+
+        return {
+            props: {
+                projects: response.data,
+            },
+        }
+    } catch (e) {
+        return {
+            props: {
+                error: 'Ошибка при получении проектов'
+            },
+        }
+    }
+}
+
+export default Home;

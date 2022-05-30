@@ -3,7 +3,7 @@ import Link from "next/link"
 import styles from '../styles/404.module.scss';
 
 
-const NotFound = () => {
+export default function NotFound() {
     return (
         <>
             <Head>
@@ -20,5 +20,3 @@ const NotFound = () => {
         </>
     );
 };
-
-export default NotFound;

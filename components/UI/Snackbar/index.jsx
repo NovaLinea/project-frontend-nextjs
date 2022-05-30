@@ -6,13 +6,13 @@ import { GrFormClose } from 'react-icons/gr'
 export const Snackbar = forwardRef((props, ref) => {
     const [show, setShow] = useState(false);
     const timeout = 5000;
-    const [message, setMessage] = useState("");
-    const [mode, setMode] = useState("");
+    const [message, setMessage] = useState('');
+    const [type, setType] = useState('');
 
     useImperativeHandle(ref, () => ({
-        show(message, mode) {
+        show(message, type) {
             setMessage(message);
-            setMode(mode);
+            setType(type);
 
             setShow(true);
             setTimeout(() => {
@@ -25,7 +25,7 @@ export const Snackbar = forwardRef((props, ref) => {
         show &&
             <div
                 className={classes.snackbar}
-                id={mode === "error" ? classes.error : classes.success}
+                id={type === "error" ? classes.error : classes.success}
             >
                 <div className={classes.message}>{message}</div>
                 <GrFormClose onClick={() => setShow(false)} className={classes.close}/>

@@ -35,7 +35,7 @@ export function ListProjects({projects}) {
             }
         } catch (e) {
             console.log('Ошибка при получении данных о лайках и избранном');
-            snackbarRef.current.show('Ошибка при получении данных о лайках и избранном', 'error');
+            //snackbarRef.current.show('Ошибка при получении данных о лайках и избранном', 'error');
         } finally {
             setIsLoading(false);
         }

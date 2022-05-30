@@ -25,7 +25,7 @@ export default function Favorite() {
             if (response.data)
                 setProjects(response.data);
         } catch (e) {
-            snackbarRef.current.show('Ошибка при получении проектов', 'error');
+            //snackbarRef.current.show('Ошибка при получении проектов', 'error');
         } finally {
             setIsLoading(false);
         }

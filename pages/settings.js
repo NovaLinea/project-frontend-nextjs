@@ -10,8 +10,8 @@ import { useAppDispatch } from '../redux/hooks';
 import { setUserData } from '../redux/slices/user';
 import styles from "../styles/Settings.module.scss"
 import UserService from '../API/UserService';
-import { MainDataUser } from '../utils/settingsValidation';
-import { ChangePassword } from '../utils/settingsValidation';
+import { MainDataUser } from '../utils/validate/settingsValidation';
+import { ChangePassword } from '../utils/validate/settingsValidation';
 import { Loader } from '../components/UI/Loader';
 import { Button } from "../components/UI/Button"
 import { Toggle } from '../components/UI/Toggle';

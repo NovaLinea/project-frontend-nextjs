@@ -1,17 +1,21 @@
-import { useState, useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import Head from 'next/head';
 import styles from "../styles/Popular.module.scss";
-import ProjectService from '../API/ProjectService';
 import { Snackbar } from "../components/UI/Snackbar";
 import { ListProjects } from '../components/ListProjects';
+import { Api } from '../utils/api';
 
 
-export default function Popular({projects, error}) {
+const Popular = ({projects, error}) => {
     const snackbarRef = useRef(null);
 
+    const showSnackbar = (message, type) => {
+        console.log(snackbarRef)
+        //snackbarRef.current.show(message, type);
+    }
+
     if (error) {
-        console.log(error)
-        //snackbarRef.current.show(error, 'error');
+        showSnackbar(error, 'error')
     }
 
     return (
@@ -30,14 +34,13 @@ export default function Popular({projects, error}) {
     );
 }
 
-export async function getStaticProps(context) {
+export const getServerSideProps = async (ctx) => {
     try {
-        const response = await ProjectService.fetchProjectsPopular();
+        const response = await Api().project.getPopular();
 
         return {
             props: {
                 projects: response.data,
-                error: 'Ошибка при получении проектов'
             },
         }
     } catch (e) {
@@ -47,4 +50,6 @@ export async function getStaticProps(context) {
             },
         }
     }
-  }
+}
+
+export default Popular;

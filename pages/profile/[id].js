@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head'
 import { useRouter } from 'next/router';
 import { useAppSelector } from '../../redux/hooks';
@@ -14,11 +14,13 @@ import { ParamsProfile } from '../../components/ParamsProfile';
 import { ListProjects } from '../../components/ListProjects';
 import { Button } from "../../components/UI/Button"
 import { Loader } from '../../components/UI/Loader';
+import { Snackbar } from "../../components/UI/Snackbar";
 import Avatar from '@mui/material/Avatar';
 
 
 export default function Profile() {
     const userData = useAppSelector(selectUserData);
+    const snackbarRef = useRef(null);
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState({});
@@ -53,7 +55,7 @@ export default function Profile() {
             }
             
         } catch (e) {
-            console.log('Ошибка при получении данных пользователя');
+            snackbarRef.current.show('Ошибка при получении данных пользователя', 'error');
         } finally {
             setIsLoading(false);
         }
@@ -62,7 +64,7 @@ export default function Profile() {
     async function fetchProjects() {
         try {
             const response = await ProjectService.fetchProjectsUser(router.query.id);
-            
+
             if (response.data) {
                 setProjects(response.data);
             }
@@ -70,7 +72,7 @@ export default function Profile() {
                 setProjects([]);
             }
         } catch (e) {
-            console.log('Ошибка при получении проектов');
+            snackbarRef.current.show('Ошибка при получении проектов', 'error');
         }
     }
 
@@ -85,7 +87,7 @@ export default function Profile() {
                     setModeSubscribe(true)
             }
         } catch (e) {
-            console.log('Ошибка при получении подписок');
+            snackbarRef.current.show('Ошибка при получении подписок', 'error');
         }
     }
 
@@ -120,6 +122,11 @@ export default function Profile() {
             };
             reader.readAsDataURL(event.target.files[0]);
         }
+    }
+
+    const showSnackbar = (message, mode) => {
+        console.log(snackbarRef)
+        snackbarRef.current.show(message, mode);
     }
 
     if (isLoading) {
@@ -193,6 +200,8 @@ export default function Profile() {
                     : <ListProjects projects={projects} />
                 }
             </div>
+
+            <Snackbar ref={snackbarRef} />
         </div>
     );
 }

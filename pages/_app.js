@@ -2,9 +2,8 @@ import '../styles/globals.scss'
 import { Header } from '../components/Header';
 import { MainLayout } from '../components/MainLayout';
 import { wrapper } from '../redux/store';
-import { parseCookies } from 'nookies';
-import AuthService from '../API/AuthService';
 import { setUserData } from '../redux/slices/user';
+import { Api } from '../utils/api';
 import NextNProgress from "nextjs-progressbar";
 
 
@@ -30,11 +29,22 @@ function App({ Component, pageProps }) {
 
 App.getInitialProps = wrapper.getInitialAppProps(store => async ({ctx, Component}) => {
     try {
-		const {token} = parseCookies(ctx);
-		const userData = await AuthService.refresh(token);
+		const userData = await Api(ctx).auth.refresh();
 		store.dispatch(setUserData(userData.data));
+
+        if (ctx.asPath === '/login' || ctx.asPath === '/register') {
+            ctx.res.writeHead(302, {
+                Location: '/404'
+            });
+            ctx.res.end();
+        }
 	} catch (e) {
-		console.log(e);
+		if (ctx.asPath === '/settings') {
+            ctx.res.writeHead(302, {
+                Location: '/login'
+            });
+            ctx.res.end();
+        }
 	}
 
     return {

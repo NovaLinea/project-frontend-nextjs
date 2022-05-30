@@ -7,10 +7,10 @@ import { useRouter } from 'next/router';
 import { useForm, FormProvider } from "react-hook-form"
 import { yupResolver } from '@hookform/resolvers/yup';
 import styles from "../styles/Auth.module.scss";
-import AuthService from '../API/AuthService';
+import { Api } from '../utils/api';
 //import { useAppDispatch } from '../redux/hooks';
 //import { setUserData } from '../redux/slices/user';
-import { RegisterFormSchema } from "../utils/authValidation";
+import { RegisterFormSchema } from "../utils/validate/authValidation";
 import { IoMdArrowBack } from "react-icons/io";
 import { Button } from '../components/UI/Button';
 import { FormField } from '../components/UI/FormField'
@@ -28,7 +28,7 @@ export default function Register() {
 
     async function registerUser(data) {
         try {
-            const response = await AuthService.register(data);
+            const response = await Api().auth.register(data);
             setCookie(null, 'token', response.data.accessToken, {
                 maxAge: 30 * 24 * 60 * 60,
                 path: '/'
