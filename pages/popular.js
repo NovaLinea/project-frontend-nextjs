@@ -1,9 +1,9 @@
 import { useRef } from 'react'
 import Head from 'next/head';
 import styles from "../styles/Popular.module.scss";
+import { Api } from '../utils/api';
 import { Snackbar } from "../components/UI/Snackbar";
 import { ListProjects } from '../components/ListProjects';
-import { Api } from '../utils/api';
 
 
 const Popular = ({projects, error}) => {

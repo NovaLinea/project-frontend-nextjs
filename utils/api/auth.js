@@ -9,7 +9,7 @@ export const AuthApi = (instance) => ({
         return instance.post('/auth/login', data);
     },
 
-    async refresh() {
-        return instance.get('/auth/refresh');
-    }
+    async getMe() {
+        return instance.get('/auth/get-me');
+    },
 })

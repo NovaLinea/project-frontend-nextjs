@@ -33,7 +33,7 @@ export const ProjectApi = (instance) => ({
         return instance.get(`/auth/project/${userID}/get-home`)
     },
 
-    async fetchFavorites(userID) {
+    async getFavorites(userID) {
         return instance.get(`/auth/project/${userID}/get-favorites`)
     },
 

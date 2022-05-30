@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router';
 import { useForm, FormProvider } from "react-hook-form"
@@ -9,6 +9,7 @@ import { selectUserData } from '../redux/slices/user';
 import { useAppDispatch } from '../redux/hooks';
 import { setUserData } from '../redux/slices/user';
 import styles from "../styles/Settings.module.scss"
+import { Api } from '../utils/api';
 import UserService from '../API/UserService';
 import { MainDataUser } from '../utils/validate/settingsValidation';
 import { ChangePassword } from '../utils/validate/settingsValidation';
@@ -21,17 +22,17 @@ import { ConfirmAction } from '../components/ConfirmAction';
 import { Snackbar } from "../components/UI/Snackbar";
 
 
-export default function Settings() {
+const Settings = ({settings, error}) => {
     const dispatch = useAppDispatch();
     const userData = useAppSelector(selectUserData);
     const snackbarRef = useRef(null);
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const [ntfsNewMsg, setNftsNewMsg] = useState(false);
-    const [ntfsNewSubs, setNftsNewSubs] = useState(false);
-    const [ntfsNewComment, setNftsNewComment] = useState(false);
-    const [ntfsUpdate, setNftsUpdate] = useState(false);
-    const [ntfsEmail, setNftsEmail] = useState(false);
+    const [ntfsNewMsg, setNftsNewMsg] = useState(settings.notifications.new_message);
+    const [ntfsNewSubs, setNftsNewSubs] = useState(settings.notifications.new_sub);
+    const [ntfsNewComment, setNftsNewComment] = useState(settings.notifications.new_comment);
+    const [ntfsUpdate, setNftsUpdate] = useState(settings.notifications.update);
+    const [ntfsEmail, setNftsEmail] = useState(settings.notifications.email_notification);
     const [modalConfirm, setModalConfirm] = useState(false);
 
     const formChangePassword = useForm({
@@ -42,32 +43,6 @@ export default function Settings() {
         mode: 'onChange',
         resolver: yupResolver(MainDataUser)
     });
-
-    useEffect(() => {
-        fetchData();
-    }, [])
-
-    async function fetchData() {
-        try {
-            setIsLoading(true);
-            const response = await UserService.fetchDataSettings(userData.id);
-            
-            if (response.data) {
-                if (response.data.notifications) {
-                    setNftsNewMsg(response.data.notifications.new_message);
-                    setNftsNewSubs(response.data.notifications.new_sub);
-                    setNftsNewComment(response.data.notifications.new_comment);
-                    setNftsUpdate(response.data.notifications.update);
-                    setNftsEmail(response.data.notifications.email_notification);
-                }
-            }
-            
-        } catch (e) {
-            snackbarRef.current.show('Ошибка при получении настроек', 'error');
-        } finally {
-            setIsLoading(false);
-        }
-    }
 
     async function saveData(data) {
         try {
@@ -275,3 +250,24 @@ export default function Settings() {
         </div>
     );
 }
+
+export const getServerSideProps = async (ctx) => {
+    try {
+        const user = await Api(ctx).auth.getMe();
+        const response = await Api().user.getSettings(user.data.id);
+
+        return {
+            props: {
+                settings: response.data,
+            },
+        }
+    } catch (e) {
+        return {
+            props: {
+                error: 'Ошибка при получении настроек'
+            },
+        }
+    }
+}
+
+export default Settings;
