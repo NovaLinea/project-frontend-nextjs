@@ -6,7 +6,7 @@ import { Snackbar } from "../components/UI/Snackbar";
 import { ListProjects } from '../components/ListProjects';
 
 
-const Favorite = ({projects, error}) => {
+const Favorite = ({projects, likesFavorites, error}) => {
     const snackbarRef = useRef(null);
 
     return (
@@ -17,7 +17,7 @@ const Favorite = ({projects, error}) => {
             </Head>
 
             {projects
-                ? <ListProjects projects={projects} />
+                ? <ListProjects projects={projects} likesFavorites={likesFavorites} />
                 : <p className={styles.empty}>У вас нет избранных проектов</p>
             }
 
@@ -29,11 +29,23 @@ const Favorite = ({projects, error}) => {
 export const getServerSideProps = async (ctx) => {
     try {
         const user = await Api(ctx).auth.getMe();
-        const response = await Api().project.getFavorites(user.data.id);
+        const projects = await Api().project.getFavorites(user.data.id);
+        let likesFavorites;
+
+        if (user.data) {
+            likesFavorites = await Api(ctx).user.getLikesFavorites(user.data.id);
+        }
 
         return {
             props: {
-                projects: response.data,
+                projects: projects.data,
+                likesFavorites: user.data ? likesFavorites.data ? likesFavorites.data : {
+                    'likes': [],
+                    'favorites': []
+                } : {
+                    'likes': [],
+                    'favorites': []
+                },
             },
         }
     } catch (e) {

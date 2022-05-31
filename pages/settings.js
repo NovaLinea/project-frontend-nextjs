@@ -10,10 +10,8 @@ import { useAppDispatch } from '../redux/hooks';
 import { setUserData } from '../redux/slices/user';
 import styles from "../styles/Settings.module.scss"
 import { Api } from '../utils/api';
-import UserService from '../API/UserService';
 import { MainDataUser } from '../utils/validate/settingsValidation';
 import { ChangePassword } from '../utils/validate/settingsValidation';
-import { Loader } from '../components/UI/Loader';
 import { Button } from "../components/UI/Button"
 import { Toggle } from '../components/UI/Toggle';
 import { FormField } from '../components/UI/FormField'
@@ -27,7 +25,6 @@ const Settings = ({settings, error}) => {
     const userData = useAppSelector(selectUserData);
     const snackbarRef = useRef(null);
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
     const [ntfsNewMsg, setNftsNewMsg] = useState(settings.notifications.new_message);
     const [ntfsNewSubs, setNftsNewSubs] = useState(settings.notifications.new_sub);
     const [ntfsNewComment, setNftsNewComment] = useState(settings.notifications.new_comment);
@@ -44,12 +41,12 @@ const Settings = ({settings, error}) => {
         resolver: yupResolver(MainDataUser)
     });
 
-    async function saveData(data) {
+    async function save(data) {
         try {
-            await UserService.saveData(userData.id, data.name, data.email, data.description, ntfsNewMsg, ntfsNewSubs, ntfsNewComment, ntfsUpdate, ntfsEmail);
-            snackbarRef.current.show('Настройки успешно сохранены', 'success');
+            await Api().user.save(userData.id, data.name, data.email, data.description, ntfsNewMsg, ntfsNewSubs, ntfsNewComment, ntfsUpdate, ntfsEmail);
+            //snackbarRef.current.show('Настройки успешно сохранены', 'success');
         } catch (e) {
-            snackbarRef.current.show('Ошибка при сохранении данных пользователя', 'error');
+            //snackbarRef.current.show('Ошибка при сохранении данных пользователя', 'error');
         }
     }
 
@@ -60,9 +57,9 @@ const Settings = ({settings, error}) => {
             else if (data.newPassword === data.oldPassword)
                 snackbarRef.current.show('Новые пароли не отличается от старого', 'error');
             else {
-                await UserService.changePassword(userData.id, data.oldPassword, data.newPassword);
+                await Api().user.changePassword(userData.id, data.oldPassword, data.newPassword);
                 console.log('Пароль успешно изменен');
-                snackbarRef.current.show('Добавьте хотя бы одну должность', 'error');
+                snackbarRef.current.show('Пароль успешно изменен', 'success');
 
                 formChangePassword.resetField("oldPassword")
                 formChangePassword.resetField("newPassword")
@@ -77,7 +74,7 @@ const Settings = ({settings, error}) => {
         try {
             setModalConfirm(false);
             if (choice) {
-                await UserService.deleteAccount(userData.id);
+                await Api().user.delete(userData.id);
 
                 destroyCookie(null, 'token')
                 dispatch(setUserData(null));
@@ -86,21 +83,6 @@ const Settings = ({settings, error}) => {
         } catch (e) {
             snackbarRef.current.show('Ошибка при удалении аккаунта', 'error');
         }
-    }
-
-    if (isLoading) {
-        return (
-            <>
-                <Head>
-                    <title>Настройки</title>
-                    <link rel="icon" href="/favicon.ico" />
-                </Head>
-
-                <div style={{display: 'flex', justifyContent: 'center', marginTop: 50}}>
-                    <Loader/>
-                </div>
-            </>
-        );
     }
 
     return (
@@ -112,7 +94,7 @@ const Settings = ({settings, error}) => {
 
             <FormProvider {... formDataUser}>
                 <form 
-                    onSubmit={formDataUser.handleSubmit(saveData)} 
+                    onSubmit={formDataUser.handleSubmit(save)} 
                     className={styles.main__settings}
                 >
                     <div className={styles.settings__header}>
@@ -254,7 +236,7 @@ const Settings = ({settings, error}) => {
 export const getServerSideProps = async (ctx) => {
     try {
         const user = await Api(ctx).auth.getMe();
-        const response = await Api().user.getSettings(user.data.id);
+        const response = await Api(ctx).user.getSettings(user.data.id);
 
         return {
             props: {

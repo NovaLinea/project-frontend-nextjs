@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useAppSelector } from '../redux/hooks';
 import { selectUserData } from '../redux/slices/user';
 import styles from '../styles/Create.module.scss';
-import ProjectService from '../API/ProjectService';
+import { Api } from '../utils/api';
 import { GrFormClose } from 'react-icons/gr';
 import { Button } from '../components/UI/Button';
 import { Input } from '../components/UI/Input';
@@ -34,7 +34,7 @@ export default function Create(props) {
         }
     }, [])
 
-    async function createProject() {
+    async function create() {
         try {
             if (userData) {
                 if (nameProject === "" || descriptionProject === "" || (typeProject === "donates" && paymentSystem === "" && priceProject === "") || (typeProject !== "team" && priceProject === ""))
@@ -44,7 +44,7 @@ export default function Create(props) {
                     snackbarRef.current.show('Добавьте хотя бы одну должность', 'error');
 
                 else {
-                    await ProjectService.createProject(userData.id, nameProject, descriptionProject, typeProject, priceProject, paymentSystem, listStaff);
+                    await Api().project.create(userData.id, nameProject, descriptionProject, typeProject, priceProject, paymentSystem, listStaff);
             
                     setNameProject("");
                     setDescriptionProject("");
@@ -63,9 +63,14 @@ export default function Create(props) {
         }
     }
 
-    const saveChanges = () => {
+    const save = () => {
         const newData = {
-            name: nameProject, description: descriptionProject, price: priceProject, payment: paymentSystem, staff: listStaff, id: Date.now()
+            name: nameProject, 
+            description: descriptionProject, 
+            price: priceProject, 
+            payment: paymentSystem, 
+            staff: listStaff, 
+            id: Date.now()
         }
         props.save(newData);
     }
@@ -191,10 +196,10 @@ export default function Create(props) {
             </div>
 
             {!props.type
-                ? <Button mode='fill' onClick={createProject}>Создать</Button>
+                ? <Button mode='fill' onClick={create}>Создать</Button>
                 : 
                 <div className={styles.actions__edit}>
-                    <Button mode='fill' onClick={saveChanges}>Сохранить изменения</Button>
+                    <Button mode='fill' onClick={save}>Сохранить изменения</Button>
                     <Button mode='output' onClick={props.cancel} style={{marginLeft: 10}}>Отмена</Button>
                 </div>
             }

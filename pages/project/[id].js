@@ -6,8 +6,7 @@ import { useRouter } from 'next/router';
 import { useAppSelector } from '../../redux/hooks';
 import { selectUserData } from '../../redux/slices/user';
 import styles from "../../styles/Project.module.scss";
-import ProjectService from '../../API/ProjectService';
-import UserService from '../../API/UserService';
+import { Api } from '../../utils/api';
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { HiOutlineBookmark } from "react-icons/hi";
 import { RiShareForwardLine } from "react-icons/ri";
@@ -19,11 +18,10 @@ import { Loader } from '../../components/UI/Loader';
 import { Dropdown, ProgressBar } from 'react-bootstrap';
 
 
-export default function Project() {
+const Project = ({project, error}) => {
     const userData = useAppSelector(selectUserData);
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(true);
-    const [project, setProject] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
     const [time, setTime] = useState("");
     const [favorites, setFavorites] = useState([]);
     const [likes, setLikes] = useState([]);
@@ -33,31 +31,12 @@ export default function Project() {
     const [statusEdit, setStatusEdit] = useState(false);
 
     useEffect(() => {
-        getDataProject();
+        determinateTime(project.created_at);
     }, [])
-
-    async function getDataProject() {
-        try {
-            const response = await ProjectService.getDataProject(router.query.id);
-
-            if (response.data) {
-                setProject(response.data);
-                setCountLikes(response.data.likes);
-                determinateTime(response.data.time);
-
-                if (userData)
-                    fetchLikesFavorites();
-            }
-        } catch (e) {
-            console.log('Ошибка при получении данных проекта', 'error');
-        } finally {
-            setIsLoading(false);
-        }
-    }
 
     async function fetchLikesFavorites() {
         try {
-            const response = await UserService.fetchLikesFavorites(userData.id);
+            const response = await Api().user.getLikesFavorites(userData.id);
             
             if (response.data) {
                 if (response.data.favorites !== null)
@@ -87,13 +66,13 @@ export default function Project() {
                     temp.splice(router.query.id, 1);
                     setLikes(temp);
                     setModeLike(false);
-                    await ProjectService.dislikeProject(router.query.id, userData.id);
+                    await Api().project.dislike(router.query.id, userData.id);
                 }
                 else {
                     setCountLikes(countLikes+1);
                     setLikes([...likes, router.query.id]);
                     setModeLike(true);
-                    await ProjectService.likeProject(router.query.id, userData.id);
+                    await Api().project.like(router.query.id, userData.id);
                 }
             }
             else
@@ -111,12 +90,12 @@ export default function Project() {
                     temp.splice(router.query.id, 1);
                     setFavorites(temp);
                     setModeFavorite(false);
-                    await ProjectService.removeFavoriteProject(router.query.id, userData.id);
+                    await Api().project.removeFavorite(router.query.id, userData.id);
                 }
                 else {
                     setFavorites([...favorites, router.query.id]);
                     setModeFavorite(true);
-                    await ProjectService.favoriteProject(router.query.id, userData.id);
+                    await Api().project.favorite(router.query.id, userData.id);
                 }
             }
             else
@@ -129,7 +108,7 @@ export default function Project() {
     async function deleteProject() {
         try {
             setIsLoading(true);
-            await ProjectService.deleteProject(router.query.id);
+            await Api().project.delete(router.query.id);
             router.push('/');
         } catch (e) {
             console.log('Ошибка при удалени проекта');
@@ -141,7 +120,7 @@ export default function Project() {
     async function saveChanges(data) {
         try {
             setIsLoading(true);
-            await ProjectService.saveChangesProject(router.query.id, data.name, data.description, project.type, data.price, data.payment, data.staff);
+            await Api().project.save(router.query.id, data.name, data.description, project.type, data.price, data.payment, data.staff);
 
             project.name = data.name;
             project.description = data.description;
@@ -222,8 +201,8 @@ export default function Project() {
                 <div className={styles.main__data}>
                     <div className={styles.person}>
                         <div className={styles.photo}></div>
-                        <Link href={`/profile/${project.user_id}`}>
-                            <a className={styles.name}>{project.name_creator}</a>
+                        <Link href={`/profile/${project.creator_id}`}>
+                            <a className={styles.name}>{project.creator_name}</a>
                         </Link>
 
                         <div className={styles.type}>
@@ -332,3 +311,28 @@ export default function Project() {
         </div>
     );
 }
+
+export const getServerSideProps = async (ctx) => {
+    try {
+        const user = await Api(ctx).auth.getMe();
+        const response = await Api(ctx).project.getData(ctx.params.id);
+        
+        if (user.data) {
+            // Check favorite and like
+        }
+
+        return {
+            props: {
+                project: response.data
+            },
+        }
+    } catch (e) {
+        return {
+            props: {
+                error: 'Ошибка при получении данных проекта'
+            },
+        }
+    }
+}
+
+export default Project;

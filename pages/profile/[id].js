@@ -1,95 +1,25 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Head from 'next/head'
 import { useRouter } from 'next/router';
-import { useAppSelector } from '../../redux/hooks';
-import { selectUserData } from '../../redux/slices/user';
 import styles from '../../styles/Profile.module.scss';
-import UserService from '../../API/UserService';
-import ProjectService from '../../API/ProjectService';
+import { Api } from '../../utils/api';
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { FiEdit2 } from "react-icons/fi";
 import { FcCheckmark } from "react-icons/fc";
 import { BiImage } from "react-icons/bi";
-import { ParamsProfile } from '../../components/ParamsProfile';
+import ParamsProfile from '../../components/ParamsProfile';
 import { ListProjects } from '../../components/ListProjects';
 import { Button } from "../../components/UI/Button"
-import { Loader } from '../../components/UI/Loader';
 import { Snackbar } from "../../components/UI/Snackbar";
 import Avatar from '@mui/material/Avatar';
 
 
-export default function Profile() {
-    const userData = useAppSelector(selectUserData);
+const Profile = ({projects, likesFavorites, userData, dataProfile, params, error}) => {
     const snackbarRef = useRef(null);
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState({});
-    const [projects, setProjects] = useState([]);
     const [modeSubscribe, setModeSubscribe] = useState(false);
     const [followings, setFollowings] = useState([]);
     const [photo, setPhoto] = useState(null);
-
-    useEffect(() => {
-        fetchProjects();
-
-        if (userData) {
-            if (userData.id === router.query.id) {
-                setData(userData);
-                setPhoto(userData.photo);
-            }
-            else
-                fetchData();
-
-            fetchFollowings();
-        }
-    }, [router.query.id])
-
-    async function fetchData() {
-        try {
-            setIsLoading(true);
-            const response = await UserService.fetchDataProfile(router.query.id);
-            
-            if (response.data) {
-                setData(response.data);
-                setPhoto(response.data.photo);
-            }
-            
-        } catch (e) {
-            snackbarRef.current.show('Ошибка при получении данных пользователя', 'error');
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
-    async function fetchProjects() {
-        try {
-            const response = await ProjectService.fetchProjectsUser(router.query.id);
-
-            if (response.data) {
-                setProjects(response.data);
-            }
-            else {
-                setProjects([]);
-            }
-        } catch (e) {
-            snackbarRef.current.show('Ошибка при получении проектов', 'error');
-        }
-    }
-
-    async function fetchFollowings() {
-        try {
-            const responce = await UserService.fetchListFollowings(userData.id);
-
-            if (responce.data) {
-                setFollowings(responce.data);
-
-                if (responce.data.indexOf(router.query.id) != -1)
-                    setModeSubscribe(true)
-            }
-        } catch (e) {
-            snackbarRef.current.show('Ошибка при получении подписок', 'error');
-        }
-    }
 
     async function subscribeUser() {
         try {
@@ -99,12 +29,12 @@ export default function Profile() {
                     temp.splice(router.query.id, 1);
                     setFollowings(temp);
                     setModeSubscribe(false);
-                    await UserService.unsubscribeUser(userData.id, router.query.id);
+                    await Api().user.unsubscribe(userData.id, router.query.id);
                 }
                 else {
                     setFollowings([...followings, router.query.id]);
                     setModeSubscribe(true);
-                    await UserService.subscribeUser(userData.id, router.query.id);
+                    await Api().user.subscribe(userData.id, router.query.id);
                 }
             }
             else
@@ -122,19 +52,6 @@ export default function Profile() {
             };
             reader.readAsDataURL(event.target.files[0]);
         }
-    }
-
-    const showSnackbar = (message, mode) => {
-        console.log(snackbarRef)
-        snackbarRef.current.show(message, mode);
-    }
-
-    if (isLoading) {
-        return (
-            <div style={{display: 'flex', justifyContent: 'center', marginTop: 50}}>
-                <Loader/>
-            </div>
-        );
     }
 
     return (
@@ -161,8 +78,8 @@ export default function Profile() {
                     </div>                    
 
                     <div className={styles.text}>
-                        <h3 className={styles.name}>{data.name}</h3>
-                        <p className={styles.description}>{data.description}</p>
+                        <h3 className={styles.name}>{dataProfile.name}</h3>
+                        <p className={styles.description}>{dataProfile.description}</p>
                     </div>
                 </div>
                 <div className={styles.action}>
@@ -192,12 +109,12 @@ export default function Profile() {
                 </div>
             </div>
 
-            <ParamsProfile countProjects={projects.length} userID={router.query.id} />
+            <ParamsProfile countProjects={projects.length} params={params}/>
 
             <div className={styles.profile__content}>
-                {!projects.length
-                    ? <p className={styles.empty}>Пока нет проектов</p>
-                    : <ListProjects projects={projects} />
+                {projects.length
+                    ? <ListProjects projects={projects} likesFavorites={likesFavorites} />
+                    : <p className={styles.empty}>Пока нет проектов</p>
                 }
             </div>
 
@@ -205,3 +122,48 @@ export default function Profile() {
         </div>
     );
 }
+
+export const getServerSideProps = async (ctx) => {
+    try {
+        const user = await Api(ctx).auth.getMe();
+        const projects = await Api(ctx).project.getProjectsUser(ctx.params.id);
+        const params = await Api(ctx).user.getParams(ctx.params.id);
+        let dataProfile;
+        let likesFavorites;
+
+        if (user.data && user.data.id === ctx.params.id) {
+            dataProfile = user;
+        }
+        else {
+            dataProfile = await Api(ctx).user.getData(ctx.params.id);
+        }
+
+        if (user.data) {            
+            likesFavorites = await Api(ctx).user.getLikesFavorites(user.data.id);
+        }
+
+        return {
+            props: {
+                projects: projects.data ? projects.data : [],
+                userData: user.data,
+                dataProfile: dataProfile.data,
+                params: params.data,
+                likesFavorites: user.data ? likesFavorites.data ? likesFavorites.data : {
+                    'likes': [],
+                    'favorites': []
+                } : {
+                    'likes': [],
+                    'favorites': []
+                },
+            },
+        }
+    } catch (e) {
+        return {
+            props: {
+                error: 'Ошибка при получении проектов'
+            },
+        }
+    }
+}
+
+export default Profile;

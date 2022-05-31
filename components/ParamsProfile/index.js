@@ -1,34 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
-import UserService from '../../API/UserService';
+import { useRef } from 'react';
 import styles from "./ParamsProfile.module.scss";
 import { Snackbar } from "../UI/Snackbar";
 
 
-export function ParamsProfile({countProjects, userID}) {
+const ParamsProfile = ({countProjects, params}) => {
     const snackbarRef = useRef(null);
-    const router = useRouter();
-    const [follows, setFollows] = useState(0);
-    const [followings, setFollowings] = useState(0);
-    const [modalFollows, setModalFollows] = useState(false);
-    const [modalFollowings, setModalFollowings] = useState(false);
-
-    useEffect(() => {
-        fetchData();
-    }, [router.query.id])
-
-    async function fetchData() {
-        try {
-            const response = await UserService.fetchDataParams(userID);
-
-            if (response.data) {
-                setFollowings(response.data.followings);
-                setFollows(response.data.follows);
-            }
-        } catch (e) {
-            snackbarRef.current.show('Ошибка при получение параметров профиля', 'error');
-        }
-    }
 
     return (
         <div className={styles.profile__params}>
@@ -37,17 +13,19 @@ export function ParamsProfile({countProjects, userID}) {
                 <p>{countProjects}</p>
             </div>
 
-            <div onClick={() => setModalFollows(true)} className={styles.params__item}>
+            <div className={styles.params__item}>
                 <p>Подписчиков</p>
-                <p>{follows}</p>
+                <p>{params.follows}</p>
             </div>
 
-            <div onClick={() => setModalFollowings(true)} className={styles.params__item}>
+            <div className={styles.params__item}>
                 <p>Подписок</p>
-                <p>{followings}</p>
+                <p>{params.followings}</p>
             </div>
 
             <Snackbar ref={snackbarRef} />
         </div>
     );
 }
+
+export default ParamsProfile;

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useRouter } from 'next/router';
 import { useAppSelector } from '../../redux/hooks';
 import { selectUserData } from '../../redux/slices/user';
-import ProjectService from '../../API/ProjectService';
 import styles from "./ProjectItem.module.scss";
+import { Api } from '../../utils/api';
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { HiOutlineBookmark } from "react-icons/hi";
 import { RiShareForwardLine } from "react-icons/ri";
@@ -50,13 +50,13 @@ export function ProjectItem({project, listLikes, listFavorites}) {
                     temp.splice(project.id, 1);
                     setLikes(temp);
                     setModeLike(false);
-                    await ProjectService.dislikeProject(project.id, userData.id);
+                    await Api().project.dislike(project.id, userData.id);
                 }
                 else {
                     setCountLikes(countLikes+1);
                     setLikes([...likes, project.id]);
                     setModeLike(true);
-                    await ProjectService.likeProject(project.id, userData.id);
+                    await Api().project.like(project.id, userData.id);
                 }
             }
             else
@@ -74,12 +74,12 @@ export function ProjectItem({project, listLikes, listFavorites}) {
                     temp.splice(project.id, 1);
                     setFavorites(temp);
                     setModeFavorite(false);
-                    await ProjectService.removeFavoriteProject(project.id, userData.id);
+                    await Api().project.removeFavorite(project.id, userData.id);
                 }
                 else {
                     setFavorites([...favorites, project.id]);
                     setModeFavorite(true);
-                    await ProjectService.favoriteProject(project.id, userData.id);
+                    await Api().project.favorite(project.id, userData.id);
                 }
             }
             else
@@ -90,7 +90,7 @@ export function ProjectItem({project, listLikes, listFavorites}) {
     }
 
     const determinateTime = () => {
-        const countTime = Math.round((new Date() - new Date(project.time)) / (1000 * 60));
+        const countTime = Math.round((new Date() - new Date(project.created_at)) / (1000 * 60));
         
         if (countTime < 60) {
             setTime(String(countTime) + " мин");
@@ -120,8 +120,8 @@ export function ProjectItem({project, listLikes, listFavorites}) {
                 <div className={styles.main__data}>
                     <div className={styles.person}>
                         <div className={styles.photo}></div>
-                        <Link href={`/profile/${project.user_id}`}>
-                            <a className={styles.name}>{project.name_creator}</a>
+                        <Link href={`/profile/${project.creator_id}`}>
+                            <a className={styles.name}>{project.creator_name}</a>
                         </Link>
 
                         <div className={styles.type}>

@@ -15,13 +15,37 @@ export const ProjectApi = (instance) => ({
 
     async create(userID, nameProject, descriptionProject, typeProject, priceProject, paymentSystem, listStaff) {
         if (typeProject === 'sale') {
-            return instance.post(`/auth/project/${userID}/create`, {name: nameProject, description: descriptionProject, price: Number(priceProject), type: typeProject, time: new Date().toISOString()})
+            const date = new Date().toISOString();
+
+            return instance.post(`/auth/project/${userID}/create`, {
+                name: nameProject, 
+                description: descriptionProject, 
+                price: Number(priceProject), 
+                type: typeProject, 
+                created_at: date,
+                updated_at: date
+            })
         }
         else if (typeProject === 'donates') {
-            return instance.post(`/auth/project/${userID}/create`, {name: nameProject, description: descriptionProject, price: Number(priceProject), payment_system: paymentSystem, type: typeProject, time: new Date().toISOString()})
+            return instance.post(`/auth/project/${userID}/create`, {
+                name: nameProject,
+                description: descriptionProject,
+                price: Number(priceProject), 
+                payment_system: paymentSystem, 
+                type: typeProject, 
+                created_at: date,
+                updated_at: date
+            })
         }
         else {
-            return instance.post(`/auth/project/${userID}/create`, {name: nameProject, description: descriptionProject, staff: listStaff, type: typeProject, time: new Date().toISOString()})
+            return instance.post(`/auth/project/${userID}/create`, {
+                name: nameProject,
+                description: descriptionProject, 
+                staff: listStaff, 
+                type: typeProject, 
+                created_at: date,
+                updated_at: date
+            })
         }
     },
 
@@ -59,13 +83,29 @@ export const ProjectApi = (instance) => ({
 
     async save(userID, nameProject, descriptionProject, typeProject, priceProject, paymentSystem, listStaff) {
         if (typeProject === 'sale') {
-            return instance.post(`/auth/project/${userID}/save`, {name: nameProject, description: descriptionProject, price: Number(priceProject), editing_time: new Date().toISOString()})
+            return instance.post(`/auth/project/${userID}/save`, {
+                name: nameProject, 
+                description: descriptionProject, 
+                price: Number(priceProject), 
+                updated_at: new Date().toISOString()
+            })
         }
         else if (typeProject === 'donates') {
-            return instance.post(`/auth/project/${userID}/save`, {name: nameProject, description: descriptionProject, price: Number(priceProject), payment_system: paymentSystem, editing_time: new Date().toISOString()})
+            return instance.post(`/auth/project/${userID}/save`, {
+                name: nameProject, 
+                description: descriptionProject, 
+                price: Number(priceProject), 
+                payment_system: paymentSystem, 
+                updated_at: new Date().toISOString()
+            })
         }
         else {
-            return instance.post(`/auth/project/${userID}/save`, {name: nameProject, description: descriptionProject, staff: listStaff, editing_time: new Date().toISOString()})
+            return instance.post(`/auth/project/${userID}/save`, {
+                name: nameProject, 
+                description: descriptionProject, 
+                staff: listStaff, 
+                updated_at: new Date().toISOString()
+            })
         }
     },
 })
