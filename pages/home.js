@@ -6,7 +6,7 @@ import { Snackbar } from "../components/UI/Snackbar";
 import { ListProjects } from '../components/ListProjects';
 
 
-const Home = ({projects, likesFavorites, error}) => {
+const Home = ({projects, error}) => {
     const snackbarRef = useRef(null);
 
     return (
@@ -17,7 +17,7 @@ const Home = ({projects, likesFavorites, error}) => {
             </Head>
 
             {projects
-                ? <ListProjects projects={projects} likesFavorites={likesFavorites} />
+                ? <ListProjects projects={projects} />
                 : <p className={styles.empty}>К сожалению ваша лента пуста</p>
             }
 
@@ -30,22 +30,10 @@ export const getServerSideProps = async (ctx) => {
     try {
         const user = await Api(ctx).auth.getMe();
         const response = await Api(ctx).project.getHome(user.data.id);
-        let likesFavorites;
-
-        if (user.data) {
-            likesFavorites = await Api(ctx).user.getLikesFavorites(user.data.id);
-        }
         
         return {
             props: {
                 projects: response.data,
-                likesFavorites: user.data ? likesFavorites.data ? likesFavorites.data : {
-                    'likes': [],
-                    'favorites': []
-                } : {
-                    'likes': [],
-                    'favorites': []
-                },
             },
         }
     } catch (e) {

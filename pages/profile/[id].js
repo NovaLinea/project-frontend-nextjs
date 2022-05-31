@@ -7,33 +7,28 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { FiEdit2 } from "react-icons/fi";
 import { FcCheckmark } from "react-icons/fc";
 import { BiImage } from "react-icons/bi";
-import ParamsProfile from '../../components/ParamsProfile';
+import { ParamsProfile } from '../../components/ParamsProfile';
 import { ListProjects } from '../../components/ListProjects';
 import { Button } from "../../components/UI/Button"
 import { Snackbar } from "../../components/UI/Snackbar";
 import Avatar from '@mui/material/Avatar';
 
 
-const Profile = ({projects, likesFavorites, userData, dataProfile, params, error}) => {
+const Profile = ({projects, userData, dataProfile, checkSubscribe, error}) => {
     const snackbarRef = useRef(null);
     const router = useRouter();
-    const [modeSubscribe, setModeSubscribe] = useState(false);
-    const [followings, setFollowings] = useState([]);
+    const [statusSubscribe, setStatusSubscribe] = useState(checkSubscribe);
     const [photo, setPhoto] = useState(null);
 
-    async function subscribeUser() {
+    async function subscribe() {
         try {
             if (userData) {
-                if (followings.indexOf(router.query.id) != -1) {
-                    const temp = [...followings];
-                    temp.splice(router.query.id, 1);
-                    setFollowings(temp);
-                    setModeSubscribe(false);
+                if (statusSubscribe) {
+                    setStatusSubscribe(false);
                     await Api().user.unsubscribe(userData.id, router.query.id);
                 }
                 else {
-                    setFollowings([...followings, router.query.id]);
-                    setModeSubscribe(true);
+                    setStatusSubscribe(true);
                     await Api().user.subscribe(userData.id, router.query.id);
                 }
             }
@@ -92,14 +87,14 @@ const Profile = ({projects, likesFavorites, userData, dataProfile, params, error
                                     Редактировать
                                 </Button>
                                 :
-                                modeSubscribe
+                                statusSubscribe
                                     ?
-                                    <Button mode='outline' onClick={subscribeUser}>
+                                    <Button mode='outline' onClick={subscribe}>
                                         <FcCheckmark className={styles.icon} />
                                         Подписан
                                     </Button>
                                     :
-                                    <Button mode='fill' onClick={subscribeUser}>
+                                    <Button mode='fill' onClick={subscribe}>
                                         <AiOutlineUserAdd className={styles.icon} />
                                         Подписаться
                                     </Button>
@@ -109,11 +104,11 @@ const Profile = ({projects, likesFavorites, userData, dataProfile, params, error
                 </div>
             </div>
 
-            <ParamsProfile countProjects={projects.length} params={params}/>
+            <ParamsProfile countProjects={projects.length} userID={dataProfile.id}/>
 
             <div className={styles.profile__content}>
                 {projects.length
-                    ? <ListProjects projects={projects} likesFavorites={likesFavorites} />
+                    ? <ListProjects projects={projects} />
                     : <p className={styles.empty}>Пока нет проектов</p>
                 }
             </div>
@@ -127,19 +122,13 @@ export const getServerSideProps = async (ctx) => {
     try {
         const user = await Api(ctx).auth.getMe();
         const projects = await Api(ctx).project.getProjectsUser(ctx.params.id);
-        const params = await Api(ctx).user.getParams(ctx.params.id);
-        let dataProfile;
-        let likesFavorites;
+        const dataProfile = await Api(ctx).user.getData(ctx.params.id);
+        let checkSubscribe = {"data": false};
 
-        if (user.data && user.data.id === ctx.params.id) {
-            dataProfile = user;
-        }
-        else {
-            dataProfile = await Api(ctx).user.getData(ctx.params.id);
-        }
-
-        if (user.data) {            
-            likesFavorites = await Api(ctx).user.getLikesFavorites(user.data.id);
+        if (user.data) {      
+            if (user.data.id !== ctx.params.id) {
+                checkSubscribe = await Api(ctx).user.checkSubscribe(user.data.id, ctx.params.id);
+            }
         }
 
         return {
@@ -147,14 +136,7 @@ export const getServerSideProps = async (ctx) => {
                 projects: projects.data ? projects.data : [],
                 userData: user.data,
                 dataProfile: dataProfile.data,
-                params: params.data,
-                likesFavorites: user.data ? likesFavorites.data ? likesFavorites.data : {
-                    'likes': [],
-                    'favorites': []
-                } : {
-                    'likes': [],
-                    'favorites': []
-                },
+                checkSubscribe: checkSubscribe.data
             },
         }
     } catch (e) {

@@ -45,6 +45,10 @@ export const UserApi = (instance) => ({
         return instance.get(`/auth/user/${userID}/get-followings`)
     },
 
+    async checkSubscribe(fromID, toID) {
+        return instance.get(`/auth/user/${fromID}/check-subscribe/${toID}`)
+    },
+
     async subscribe(userID, accountID) {
         return instance.get(`/auth/user/${userID}/subscribe/${accountID}`)
     },

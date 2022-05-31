@@ -1,10 +1,32 @@
-import { useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import styles from "./ParamsProfile.module.scss";
+import { Api } from '../../utils/api';
 import { Snackbar } from "../UI/Snackbar";
 
 
-const ParamsProfile = ({countProjects, params}) => {
+export function ParamsProfile({countProjects, userID}) {
     const snackbarRef = useRef(null);
+    const router = useRouter();
+    const [follows, setFollows] = useState(0);
+    const [followings, setFollowings] = useState(0);
+
+    useEffect(() => {
+        fetchData();
+    }, [router.query.id])
+
+    async function fetchData() {
+        try {
+            const response = await Api().user.getParams(userID);
+
+            if (response.data) {
+                setFollowings(response.data.followings);
+                setFollows(response.data.follows);
+            }
+        } catch (e) {
+            snackbarRef.current.show('Ошибка при получение параметров профиля', 'error');
+        }
+    }
 
     return (
         <div className={styles.profile__params}>
@@ -15,17 +37,15 @@ const ParamsProfile = ({countProjects, params}) => {
 
             <div className={styles.params__item}>
                 <p>Подписчиков</p>
-                <p>{params.follows}</p>
+                <p>{follows}</p>
             </div>
 
             <div className={styles.params__item}>
                 <p>Подписок</p>
-                <p>{params.followings}</p>
+                <p>{followings}</p>
             </div>
 
             <Snackbar ref={snackbarRef} />
         </div>
     );
 }
-
-export default ParamsProfile;

@@ -6,7 +6,7 @@ import { Snackbar } from "../components/UI/Snackbar";
 import { ListProjects } from '../components/ListProjects'
 
 
-const Popular = ({projects, likesFavorites, error}) => {
+const Popular = ({projects, error}) => {
     const snackbarRef = useRef(null);
 
     const showSnackbar = (message, type) => {
@@ -26,7 +26,7 @@ const Popular = ({projects, likesFavorites, error}) => {
             </Head>
 
             {projects &&
-                <ListProjects projects={projects} likesFavorites={likesFavorites} />
+                <ListProjects projects={projects} />
             }
             
             <Snackbar ref={snackbarRef} />
@@ -36,24 +36,11 @@ const Popular = ({projects, likesFavorites, error}) => {
 
 export const getServerSideProps = async (ctx) => {
     try {
-        const user = await Api(ctx).auth.getMe();
         const projects = await Api().project.getPopular();
-        let likesFavorites;
-
-        if (user.data) {
-            likesFavorites = await Api(ctx).user.getLikesFavorites(user.data.id);
-        }
 
         return {
             props: {
                 projects: projects.data,
-                likesFavorites: user.data ? likesFavorites.data ? likesFavorites.data : {
-                    'likes': [],
-                    'favorites': []
-                } : {
-                    'likes': [],
-                    'favorites': []
-                },
             },
         }
     } catch (e) {

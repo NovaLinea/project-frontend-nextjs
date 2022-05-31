@@ -29,8 +29,8 @@ function App({ Component, pageProps }) {
 
 App.getInitialProps = wrapper.getInitialAppProps(store => async ({ctx, Component}) => {
     try {
-		const userData = await Api(ctx).auth.getMe();
-		store.dispatch(setUserData(userData.data));
+		const user = await Api(ctx).auth.getMe();
+		store.dispatch(setUserData(user.data));
 
         if (ctx.asPath === '/login' || ctx.asPath === '/register') {
             ctx.res.writeHead(302, {
